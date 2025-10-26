@@ -118,6 +118,10 @@
         }
 
         .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-card:nth-child(4) {
             background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
         }
 
@@ -208,6 +212,23 @@
             font-weight: 500;
         }
 
+        .trend-indicator {
+            display: inline-block;
+            font-size: 12px;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .trend-up {
+            color: #48bb78;
+        }
+
+        .trend-down {
+            color: #f56565;
+        }
+
         @media (max-width: 768px) {
             .success-card {
                 padding: 32px 24px;
@@ -241,26 +262,32 @@
             <p class="subtitle">El paciente recibirá su recordatorio un día antes de la cita 📅</p>
             <p class="subtitle">y también el enlace para dejar su reseña ⭐</p>
             
-            <div class="month-badge">📊 Estadísticas de Octubre 2025</div>
+            <div class="month-badge">📊 Estadísticas de <span id="currentMonth"></span></div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="stat-icon">📨</span>
-                <div class="stat-number">54</div>
+                <div class="stat-number" id="recordatoriosEnviados">0</div>
                 <div class="stat-label">Recordatorios Enviados</div>
             </div>
             
             <div class="stat-card">
                 <span class="stat-icon">⭐</span>
-                <div class="stat-number">3</div>
+                <div class="stat-number" id="resenasRecibidas">0</div>
                 <div class="stat-label">Reseñas Recibidas</div>
             </div>
             
             <div class="stat-card">
                 <span class="stat-icon">📈</span>
-                <div class="stat-number">100%</div>
+                <div class="stat-number" id="tasaAsistencia">0%</div>
                 <div class="stat-label">Tasa de Asistencia</div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">❌</span>
+                <div class="stat-number" id="citasPerdidas">0</div>
+                <div class="stat-label">Citas Perdidas</div>
             </div>
         </div>
 
@@ -269,21 +296,164 @@
             <div class="impact-grid">
                 <div class="impact-item">
                     <div class="impact-emoji">⏰</div>
-                    <div class="impact-value">6.3h</div>
+                    <div class="impact-value" id="tiempoAhorrado">0h</div>
                     <div class="impact-text">Tiempo ahorrado</div>
                 </div>
                 <div class="impact-item">
                     <div class="impact-emoji">💰</div>
-                    <div class="impact-value">€210</div>
+                    <div class="impact-value" id="ingresosRecuperados">€0</div>
                     <div class="impact-text">Ingresos recuperados</div>
                 </div>
                 <div class="impact-item">
                     <div class="impact-emoji">🎯</div>
-                    <div class="impact-value">34%</div>
-                    <div class="impact-text">Tasa de conversión a reseña</div>
+                    <div class="impact-value" id="conversionResenas">0%</div>
+                    <div class="impact-text">Conversión a reseña</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-emoji">🔗</div>
+                    <div class="impact-value" id="enlacesEnviados">0</div>
+                    <div class="impact-text">Enlaces  de reseña enviados</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // ============================================
+        // VARIABLES DE ENTRADA (Modifica estos valores)
+        // ============================================
+        
+        const recordatoriosEnviados = 36;  // Total de recordatorios enviados este mes
+        const resenasRecibidas = 3;       // Total de reseñas recibidas
+        const citasPerdidas = 0;           // Citas que no asistieron (ausencias)
+        const enlacesResenasEnviados = 20; // Enlaces de reseña enviados (normalmente = recordatorios)
+        
+        // Constantes para cálculos
+        const PRECIO_SESION = 30;          // Precio promedio por sesión en €
+        const MINUTOS_POR_RECORDATORIO = 3; // Tiempo que tomaba enviar recordatorio manual
+        const CITAS_ANTES_SISTEMA = 5;     // Promedio de citas perdidas antes del sistema
+        
+        // ============================================
+        // CÁLCULOS AUTOMÁTICOS
+        // ============================================
+        
+        // 1. TASA DE ASISTENCIA
+        // Fórmula: ((Recordatorios - Citas Perdidas) / Recordatorios) × 100
+        const citasAsistidas = recordatoriosEnviados - citasPerdidas;
+        const tasaAsistencia = recordatoriosEnviados > 0 
+            ? ((citasAsistidas / recordatoriosEnviados) * 100).toFixed(1)
+            : 0;
+        
+        // 2. CONVERSIÓN A RESEÑAS
+        // Fórmula: (Reseñas Recibidas / Enlaces Enviados) × 100
+        const conversionResenas = enlacesResenasEnviados > 0
+            ? ((resenasRecibidas / enlacesResenasEnviados) * 100).toFixed(1)
+            : 0;
+        
+        // 3. INGRESOS RECUPERADOS
+        // Fórmula: (Citas que hubieran sido perdidas - Citas perdidas actuales) × Precio sesión
+        const citasRecuperadas = Math.max(0, CITAS_ANTES_SISTEMA - citasPerdidas);
+        const ingresosRecuperados = citasRecuperadas * PRECIO_SESION;
+        
+        // 4. TIEMPO AHORRADO
+        // Fórmula: (Recordatorios × Minutos por recordatorio) / 60
+        const minutosAhorrados = recordatoriosEnviados * MINUTOS_POR_RECORDATORIO;
+        const horasAhorradas = (minutosAhorrados / 60).toFixed(1);
+        
+        // ============================================
+        // ACTUALIZAR INTERFAZ
+        // ============================================
+        
+        // Mostrar mes actual
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const fechaActual = new Date();
+        document.getElementById('currentMonth').textContent = 
+            `${meses[fechaActual.getMonth()]} ${fechaActual.getFullYear()}`;
+        
+        // Actualizar estadísticas principales
+        document.getElementById('recordatoriosEnviados').textContent = recordatoriosEnviados;
+        document.getElementById('resenasRecibidas').textContent = resenasRecibidas;
+        document.getElementById('citasPerdidas').textContent = citasPerdidas;
+        document.getElementById('tasaAsistencia').textContent = tasaAsistencia + '%';
+        
+        // Actualizar impacto
+        document.getElementById('tiempoAhorrado').textContent = horasAhorradas + 'h';
+        document.getElementById('ingresosRecuperados').textContent = '€' + ingresosRecuperados;
+        document.getElementById('conversionResenas').textContent = conversionResenas + '%';
+        document.getElementById('enlacesEnviados').textContent = enlacesResenasEnviados;
+        
+        // ============================================
+        // ANIMACIÓN DE CONTADORES
+        // ============================================
+        
+        function animateCounter(elementId, finalValue, duration = 1500, suffix = '') {
+            const element = document.getElementById(elementId);
+            const isPercentage = suffix === '%';
+            const isCurrency = suffix.includes('€');
+            
+            // Extraer el valor numérico
+            let numericValue = parseFloat(finalValue.toString().replace(/[^0-9.]/g, ''));
+            
+            const startValue = 0;
+            const increment = numericValue / (duration / 16); // 60 FPS
+            let currentValue = startValue;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= numericValue) {
+                    currentValue = numericValue;
+                    clearInterval(timer);
+                }
+                
+                if (isCurrency) {
+                    element.textContent = '€' + Math.floor(currentValue);
+                } else if (isPercentage) {
+                    element.textContent = currentValue.toFixed(1) + '%';
+                } else if (suffix === 'h') {
+                    element.textContent = currentValue.toFixed(1) + 'h';
+                } else {
+                    element.textContent = Math.floor(currentValue);
+                }
+            }, 16);
+        }
+        
+        // Iniciar animaciones después de un pequeño delay
+        setTimeout(() => {
+            animateCounter('recordatoriosEnviados', recordatoriosEnviados, 1200);
+            animateCounter('resenasRecibidas', resenasRecibidas, 1400);
+            animateCounter('citasPerdidas', citasPerdidas, 1000);
+            animateCounter('tasaAsistencia', tasaAsistencia, 1600, '%');
+            animateCounter('tiempoAhorrado', horasAhorradas, 1300, 'h');
+            animateCounter('ingresosRecuperados', ingresosRecuperados, 1500, '€');
+            animateCounter('conversionResenas', conversionResenas, 1400, '%');
+            animateCounter('enlacesEnviados', enlacesResenasEnviados, 1100);
+        }, 500);
+        
+        // ============================================
+        // CONSOLA: MOSTRAR CÁLCULOS DETALLADOS
+        // ============================================
+        
+        console.log('=== ESTADÍSTICAS DETALLADAS ===');
+        console.log('\n📊 DATOS DE ENTRADA:');
+        console.log(`- Recordatorios enviados: ${recordatoriosEnviados}`);
+        console.log(`- Reseñas recibidas: ${resenasRecibidas}`);
+        console.log(`- Citas perdidas: ${citasPerdidas}`);
+        console.log(`- Enlaces de reseña enviados: ${enlacesResenasEnviados}`);
+        
+        console.log('\n📈 CÁLCULOS:');
+        console.log(`- Citas asistidas: ${recordatoriosEnviados} - ${citasPerdidas} = ${citasAsistidas}`);
+        console.log(`- Tasa de asistencia: (${citasAsistidas} / ${recordatoriosEnviados}) × 100 = ${tasaAsistencia}%`);
+        console.log(`- Conversión a reseñas: (${resenasRecibidas} / ${enlacesResenasEnviados}) × 100 = ${conversionResenas}%`);
+        console.log(`- Citas recuperadas: ${CITAS_ANTES_SISTEMA} - ${citasPerdidas} = ${citasRecuperadas} citas`);
+        console.log(`- Ingresos recuperados: ${citasRecuperadas} × €${PRECIO_SESION} = €${ingresosRecuperados}`);
+        console.log(`- Tiempo ahorrado: (${recordatoriosEnviados} × ${MINUTOS_POR_RECORDATORIO} min) / 60 = ${horasAhorradas}h`);
+        
+        console.log('\n💡 RESUMEN DEL IMPACTO:');
+        console.log(`✅ Has ahorrado ${horasAhorradas} horas este mes`);
+        console.log(`💰 Has recuperado €${ingresosRecuperados} en ingresos`);
+        console.log(`⭐ ${conversionResenas}% de tus pacientes dejaron reseña`);
+        console.log(`📈 ${tasaAsistencia}% de tasa de asistencia`);
+    </script>
 </body>
 </html>
