@@ -187,11 +187,13 @@
             padding: 20px;
             border-radius: 12px;
             background: #f7fafc;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
         }
 
         .impact-item:hover {
             background: #edf2f7;
+            transform: translateY(-4px);
         }
 
         .impact-emoji {
@@ -212,21 +214,73 @@
             font-weight: 500;
         }
 
-        .trend-indicator {
+        .breakdown {
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .tooltip {
+            position: relative;
             display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            background-color: #2d3748;
+            color: white;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
             font-size: 12px;
-            margin-left: 8px;
-            padding: 2px 8px;
-            border-radius: 12px;
+            line-height: 1.5;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .total-impact-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin-top: 24px;
+            animation: slideUp 0.5s ease-out 0.8s both;
+        }
+
+        .total-impact-value {
+            font-size: 56px;
+            font-weight: 900;
+            margin: 16px 0;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .total-impact-label {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .badge-info {
+            display: inline-block;
             background: rgba(255, 255, 255, 0.2);
-        }
-
-        .trend-up {
-            color: #48bb78;
-        }
-
-        .trend-down {
-            color: #f56565;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            margin-top: 12px;
         }
 
         @media (max-width: 768px) {
@@ -248,6 +302,14 @@
 
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .total-impact-value {
+                font-size: 42px;
+            }
+
+            .tooltip-text {
+                width: 200px;
             }
         }
     </style>
@@ -294,27 +356,52 @@
         <div class="impact-section" style="margin-top: 24px;">
             <h2 class="impact-title">💡 Impacto del Sistema Este Mes</h2>
             <div class="impact-grid">
-                <div class="impact-item">
+                <div class="impact-item tooltip">
                     <div class="impact-emoji">⏰</div>
                     <div class="impact-value" id="tiempoAhorrado">0h</div>
                     <div class="impact-text">Tiempo ahorrado</div>
+                    <div class="breakdown" id="tiempoBreakdown"></div>
+                    <span class="tooltip-text">
+                        Tiempo que hubieras gastado enviando recordatorios manualmente por WhatsApp
+                    </span>
                 </div>
-                <div class="impact-item">
+                
+                <div class="impact-item tooltip">
                     <div class="impact-emoji">💰</div>
                     <div class="impact-value" id="ingresosRecuperados">€0</div>
-                    <div class="impact-text">Ingresos recuperados</div>
+                    <div class="impact-text">Ingresos por citas</div>
+                    <div class="breakdown" id="ingresosBreakdown"></div>
+                    <span class="tooltip-text">
+                        Ingresos de las citas que antes se perdían y ahora recuperas gracias a los recordatorios automáticos
+                    </span>
                 </div>
-                <div class="impact-item">
-                    <div class="impact-emoji">🎯</div>
-                    <div class="impact-value" id="conversionResenas">0%</div>
-                    <div class="impact-text">Conversión a reseña</div>
+                
+                <div class="impact-item tooltip">
+                    <div class="impact-emoji">💎</div>
+                    <div class="impact-value" id="valorTiempo">€0</div>
+                    <div class="impact-text">Valor del tiempo</div>
+                    <div class="breakdown" id="valorTiempoBreakdown"></div>
+                    <span class="tooltip-text">
+                        Valor económico del tiempo ahorrado. Ese tiempo lo puedes usar para atender más pacientes o mejorar tu calidad de vida
+                    </span>
                 </div>
-                <div class="impact-item">
-                    <div class="impact-emoji">🔗</div>
-                    <div class="impact-value" id="enlacesEnviados">0</div>
-                    <div class="impact-text">Enlaces  de reseña enviados</div>
+                
+                <div class="impact-item tooltip">
+                    <div class="impact-emoji">🌟</div>
+                    <div class="impact-value" id="valorResenas">€0</div>
+                    <div class="impact-text">Valor de reseñas</div>
+                    <div class="breakdown" id="resenasBreakdown"></div>
+                    <span class="tooltip-text">
+                        Valor estimado de las reseñas en Google. Cada reseña positiva atrae aproximadamente €7-12 en nuevos ingresos por mayor visibilidad
+                    </span>
                 </div>
             </div>
+        </div>
+
+        <div class="total-impact-card">
+            <div class="total-impact-label">🚀 Impacto Económico Total</div>
+            <div class="total-impact-value" id="impactoTotal">€0</div>
+            <div class="badge-info" id="desgloseTotalBadge">Ver desglose arriba ↑</div>
         </div>
     </div>
 
@@ -328,10 +415,13 @@
         const citasPerdidas = 0;           // Citas que no asistieron (ausencias)
         const enlacesResenasEnviados = 20; // Enlaces de reseña enviados (normalmente = recordatorios)
         
-        // Constantes para cálculos
-        const PRECIO_SESION = 30;          // Precio promedio por sesión en €
-        const MINUTOS_POR_RECORDATORIO = 3; // Tiempo que tomaba enviar recordatorio manual
-        const CITAS_ANTES_SISTEMA = 5;     // Promedio de citas perdidas antes del sistema
+        // Constantes para cálculos económicos
+        const PRECIO_SESION = 30;              // Precio promedio por sesión en €
+        const VALOR_HORA_PROFESIONAL = 30;     // Cuánto vale tu hora como fisioterapeuta €
+        const MINUTOS_POR_RECORDATORIO = 3;    // Tiempo que tomaba enviar recordatorio manual
+        const CITAS_ANTES_SISTEMA = 4;         // Promedio de citas perdidas antes del sistema
+        const VALOR_RESENA_MIN = 7;            // Valor mínimo estimado por reseña €
+        const VALOR_RESENA_MAX = 12;           // Valor máximo estimado por reseña €
         
         // ============================================
         // CÁLCULOS AUTOMÁTICOS
@@ -350,7 +440,7 @@
             ? ((resenasRecibidas / enlacesResenasEnviados) * 100).toFixed(1)
             : 0;
         
-        // 3. INGRESOS RECUPERADOS
+        // 3. INGRESOS RECUPERADOS (Solo por citas salvadas)
         // Fórmula: (Citas que hubieran sido perdidas - Citas perdidas actuales) × Precio sesión
         const citasRecuperadas = Math.max(0, CITAS_ANTES_SISTEMA - citasPerdidas);
         const ingresosRecuperados = citasRecuperadas * PRECIO_SESION;
@@ -359,6 +449,18 @@
         // Fórmula: (Recordatorios × Minutos por recordatorio) / 60
         const minutosAhorrados = recordatoriosEnviados * MINUTOS_POR_RECORDATORIO;
         const horasAhorradas = (minutosAhorrados / 60).toFixed(1);
+        
+        // 5. VALOR DEL TIEMPO AHORRADO
+        // Fórmula: Horas ahorradas × Valor por hora
+        const valorTiempoAhorrado = Math.round(parseFloat(horasAhorradas) * VALOR_HORA_PROFESIONAL);
+        
+        // 6. VALOR DE LAS RESEÑAS
+        // Fórmula: Reseñas × Valor promedio de reseña
+        const valorPromedioResena = (VALOR_RESENA_MIN + VALOR_RESENA_MAX) / 2;
+        const valorTotalResenas = Math.round(resenasRecibidas * valorPromedioResena);
+        
+        // 7. IMPACTO ECONÓMICO TOTAL
+        const impactoTotal = ingresosRecuperados + valorTiempoAhorrado + valorTotalResenas;
         
         // ============================================
         // ACTUALIZAR INTERFAZ
@@ -380,8 +482,22 @@
         // Actualizar impacto
         document.getElementById('tiempoAhorrado').textContent = horasAhorradas + 'h';
         document.getElementById('ingresosRecuperados').textContent = '€' + ingresosRecuperados;
-        document.getElementById('conversionResenas').textContent = conversionResenas + '%';
-        document.getElementById('enlacesEnviados').textContent = enlacesResenasEnviados;
+        document.getElementById('valorTiempo').textContent = '€' + valorTiempoAhorrado;
+        document.getElementById('valorResenas').textContent = '€' + valorTotalResenas;
+        document.getElementById('impactoTotal').textContent = '€' + impactoTotal;
+        
+        // Agregar breakdowns (desglose)
+        document.getElementById('tiempoBreakdown').textContent = 
+            `${recordatoriosEnviados} recordatorios × ${MINUTOS_POR_RECORDATORIO} min`;
+        
+        document.getElementById('ingresosBreakdown').textContent = 
+            `${citasRecuperadas} citas × €${PRECIO_SESION}`;
+        
+        document.getElementById('valorTiempoBreakdown').textContent = 
+            `${horasAhorradas}h × €${VALOR_HORA_PROFESIONAL}/h`;
+        
+        document.getElementById('resenasBreakdown').textContent = 
+            `${resenasRecibidas} reseñas × €${valorPromedioResena.toFixed(0)} aprox`;
         
         // ============================================
         // ANIMACIÓN DE CONTADORES
@@ -426,8 +542,9 @@
             animateCounter('tasaAsistencia', tasaAsistencia, 1600, '%');
             animateCounter('tiempoAhorrado', horasAhorradas, 1300, 'h');
             animateCounter('ingresosRecuperados', ingresosRecuperados, 1500, '€');
-            animateCounter('conversionResenas', conversionResenas, 1400, '%');
-            animateCounter('enlacesEnviados', enlacesResenasEnviados, 1100);
+            animateCounter('valorTiempo', valorTiempoAhorrado, 1400, '€');
+            animateCounter('valorResenas', valorTotalResenas, 1600, '€');
+            animateCounter('impactoTotal', impactoTotal, 2000, '€');
         }, 500);
         
         // ============================================
@@ -441,19 +558,49 @@
         console.log(`- Citas perdidas: ${citasPerdidas}`);
         console.log(`- Enlaces de reseña enviados: ${enlacesResenasEnviados}`);
         
-        console.log('\n📈 CÁLCULOS:');
-        console.log(`- Citas asistidas: ${recordatoriosEnviados} - ${citasPerdidas} = ${citasAsistidas}`);
-        console.log(`- Tasa de asistencia: (${citasAsistidas} / ${recordatoriosEnviados}) × 100 = ${tasaAsistencia}%`);
-        console.log(`- Conversión a reseñas: (${resenasRecibidas} / ${enlacesResenasEnviados}) × 100 = ${conversionResenas}%`);
-        console.log(`- Citas recuperadas: ${CITAS_ANTES_SISTEMA} - ${citasPerdidas} = ${citasRecuperadas} citas`);
-        console.log(`- Ingresos recuperados: ${citasRecuperadas} × €${PRECIO_SESION} = €${ingresosRecuperados}`);
-        console.log(`- Tiempo ahorrado: (${recordatoriosEnviados} × ${MINUTOS_POR_RECORDATORIO} min) / 60 = ${horasAhorradas}h`);
+        console.log('\n💶 CONSTANTES ECONÓMICAS:');
+        console.log(`- Precio por sesión: €${PRECIO_SESION}`);
+        console.log(`- Valor hora profesional: €${VALOR_HORA_PROFESIONAL}`);
+        console.log(`- Valor reseña: €${VALOR_RESENA_MIN}-${VALOR_RESENA_MAX} (promedio: €${valorPromedioResena.toFixed(2)})`);
+        console.log(`- Tiempo por recordatorio: ${MINUTOS_POR_RECORDATORIO} minutos`);
         
-        console.log('\n💡 RESUMEN DEL IMPACTO:');
-        console.log(`✅ Has ahorrado ${horasAhorradas} horas este mes`);
-        console.log(`💰 Has recuperado €${ingresosRecuperados} en ingresos`);
-        console.log(`⭐ ${conversionResenas}% de tus pacientes dejaron reseña`);
-        console.log(`📈 ${tasaAsistencia}% de tasa de asistencia`);
+        console.log('\n📈 CÁLCULOS:');
+        console.log(`\n1️⃣ TASA DE ASISTENCIA:`);
+        console.log(`   (${citasAsistidas} / ${recordatoriosEnviados}) × 100 = ${tasaAsistencia}%`);
+        
+        console.log(`\n2️⃣ CONVERSIÓN A RESEÑAS:`);
+        console.log(`   (${resenasRecibidas} / ${enlacesResenasEnviados}) × 100 = ${conversionResenas}%`);
+        
+        console.log(`\n3️⃣ INGRESOS RECUPERADOS (solo citas):`);
+        console.log(`   Citas recuperadas: ${CITAS_ANTES_SISTEMA} - ${citasPerdidas} = ${citasRecuperadas} citas`);
+        console.log(`   Ingresos: ${citasRecuperadas} × €${PRECIO_SESION} = €${ingresosRecuperados}`);
+        
+        console.log(`\n4️⃣ TIEMPO AHORRADO:`);
+        console.log(`   (${recordatoriosEnviados} × ${MINUTOS_POR_RECORDATORIO} min) / 60 = ${horasAhorradas}h`);
+        
+        console.log(`\n5️⃣ VALOR DEL TIEMPO:`);
+        console.log(`   ${horasAhorradas}h × €${VALOR_HORA_PROFESIONAL}/h = €${valorTiempoAhorrado}`);
+        
+        console.log(`\n6️⃣ VALOR DE RESEÑAS:`);
+        console.log(`   ${resenasRecibidas} reseñas × €${valorPromedioResena.toFixed(2)} = €${valorTotalResenas}`);
+        
+        console.log(`\n💰 IMPACTO ECONÓMICO TOTAL:`);
+        console.log(`   €${ingresosRecuperados} (citas) + €${valorTiempoAhorrado} (tiempo) + €${valorTotalResenas} (reseñas)`);
+        console.log(`   = €${impactoTotal} TOTAL`);
+        
+        console.log('\n🎯 DESGLOSE PORCENTUAL:');
+        const porcIngresos = ((ingresosRecuperados / impactoTotal) * 100).toFixed(1);
+        const porcTiempo = ((valorTiempoAhorrado / impactoTotal) * 100).toFixed(1);
+        const porcResenas = ((valorTotalResenas / impactoTotal) * 100).toFixed(1);
+        console.log(`   📊 Ingresos por citas: ${porcIngresos}%`);
+        console.log(`   ⏰ Valor del tiempo: ${porcTiempo}%`);
+        console.log(`   ⭐ Valor de reseñas: ${porcResenas}%`);
+        
+        console.log('\n✨ RESUMEN EJECUTIVO:');
+        console.log(`   🚀 Impacto total del mes: €${impactoTotal}`);
+        console.log(`   📈 Tasa de asistencia: ${tasaAsistencia}%`);
+        console.log(`   ⭐ Conversión a reseña: ${conversionResenas}%`);
+        console.log(`   ⏰ Tiempo liberado: ${horasAhorradas} horas`);
     </script>
 </body>
 </html>
