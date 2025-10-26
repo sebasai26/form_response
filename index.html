@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -30,7 +30,7 @@
             background: white;
             border-radius: 24px;
             padding: 48px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(14, 165, 233, 0.3);
             text-align: center;
             margin-bottom: 24px;
             animation: slideUp 0.5s ease-out;
@@ -50,7 +50,7 @@
         .checkmark-circle {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -75,14 +75,14 @@
         }
 
         h1 {
-            color: #2d3748;
+            color: #0c4a6e;
             font-size: 32px;
             margin-bottom: 16px;
             font-weight: 700;
         }
 
         .subtitle {
-            color: #718096;
+            color: #475569;
             font-size: 18px;
             line-height: 1.6;
             margin-bottom: 12px;
@@ -106,7 +106,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
             border-radius: 16px;
             padding: 32px;
             color: white;
@@ -114,20 +114,20 @@
         }
 
         .stat-card:nth-child(2) {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
         }
 
         .stat-card:nth-child(3) {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
         }
 
         .stat-card:nth-child(4) {
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
 
         .stat-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 40px rgba(14, 165, 233, 0.3);
         }
 
         .stat-icon {
@@ -151,8 +151,8 @@
 
         .month-badge {
             display: inline-block;
-            background: #edf2f7;
-            color: #667eea;
+            background: #e0f2fe;
+            color: #0c4a6e;
             padding: 8px 20px;
             border-radius: 20px;
             font-size: 14px;
@@ -164,12 +164,12 @@
             background: white;
             border-radius: 20px;
             padding: 32px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.15);
             animation: slideUp 0.5s ease-out 0.6s both;
         }
 
         .impact-title {
-            color: #2d3748;
+            color: #0c4a6e;
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 24px;
@@ -186,101 +186,175 @@
             text-align: center;
             padding: 20px;
             border-radius: 12px;
-            background: #f7fafc;
+            background: #f0f9ff;
             transition: background 0.3s ease, transform 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
 
         .impact-item:hover {
-            background: #edf2f7;
+            background: #e0f2fe;
             transform: translateY(-4px);
         }
 
-        .impact-emoji {
+        .impact-details {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #bae6fd;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .impact-item.active .impact-details {
+            display: block;
+        }
+
+        .impact-item::after {
+            content: "▼";
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 10px;
+            color: #94a3b8;
+            transition: transform 0.3s ease;
+        }
+
+        .impact-item.active::after {
+            transform: rotate(180deg);
+        }
+
+        .impact-icon {
             font-size: 36px;
             margin-bottom: 12px;
         }
 
         .impact-value {
+            color: #0c4a6e;
             font-size: 28px;
-            font-weight: 700;
-            color: #667eea;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .impact-label {
+            color: #475569;
+            font-size: 14px;
+            font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .impact-text {
-            font-size: 14px;
-            color: #718096;
-            font-weight: 500;
-        }
-
-        .breakdown {
-            font-size: 11px;
-            color: #a0aec0;
-            margin-top: 8px;
-            line-height: 1.4;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-        }
-
-        .tooltip-text {
-            visibility: hidden;
-            background-color: #2d3748;
-            color: white;
-            text-align: left;
-            border-radius: 8px;
-            padding: 12px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
+        .impact-breakdown {
+            color: #64748b;
             font-size: 12px;
-            line-height: 1.5;
-            opacity: 0;
-            transition: opacity 0.3s;
+            font-style: italic;
         }
 
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .total-impact-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
+        .total-impact {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            border-radius: 16px;
             padding: 32px;
             color: white;
             text-align: center;
             margin-top: 24px;
-            animation: slideUp 0.5s ease-out 0.8s both;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+        }
+
+        .total-impact-label {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .total-impact-value {
             font-size: 56px;
             font-weight: 900;
-            margin: 16px 0;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .total-impact-label {
-            font-size: 18px;
-            opacity: 0.95;
-            font-weight: 600;
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 24px;
         }
 
-        .badge-info {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 12px;
+        .info-box-title {
+            color: #0c4a6e;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .info-box-content {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box ul {
             margin-top: 12px;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .methodology {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 2px solid #e0f2fe;
+        }
+
+        .methodology-title {
+            color: #0c4a6e;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .methodology-content {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula {
+            background: #f0f9ff;
+            border-left: 3px solid #0ea5e9;
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #0c4a6e;
         }
 
         @media (max-width: 768px) {
@@ -289,125 +363,158 @@
             }
 
             h1 {
-                font-size: 24px;
-            }
-
-            .subtitle {
-                font-size: 16px;
-            }
-
-            .stat-number {
-                font-size: 36px;
+                font-size: 28px;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .total-impact-value {
-                font-size: 42px;
+            .stat-number {
+                font-size: 40px;
             }
 
-            .tooltip-text {
-                width: 200px;
+            .impact-grid {
+                grid-template-columns: 1fr;
             }
+
+            .total-impact-value {
+                font-size: 48px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Tarjeta de Éxito -->
         <div class="success-card">
             <div class="checkmark-circle">
                 <span class="checkmark">✓</span>
             </div>
+            
             <h1>¡Registro Completado con Éxito!</h1>
-            <p class="subtitle">El paciente recibirá su recordatorio un día antes de la cita 📅</p>
-            <p class="subtitle">y también el enlace para dejar su reseña ⭐</p>
+            <p class="subtitle">
+                Estas son tus estadísticas de este mes 📊
+            </p>
             
-            <div class="month-badge">📊 Estadísticas de <span id="currentMonth"></span></div>
+            <div class="month-badge">
+                📅 <span id="currentMonth">Octubre 2024</span>
+            </div>
+            
+            <!-- Estadísticas Principales -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">📱</span>
+                    <div class="stat-number" id="recordatoriosEnviados">0</div>
+                    <div class="stat-label">Recordatorios Enviados</div>
+                </div>
+                
+                <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
+                    <div class="stat-number" id="resenasRecibidas">0</div>
+                    <div class="stat-label">Reseñas Recibidas</div>
+                </div>
+                
+                <div class="stat-card">
+                    <span class="stat-icon">✅</span>
+                    <div class="stat-number" id="citasPerdidas">0</div>
+                    <div class="stat-label">Citas Perdidas</div>
+                </div>
+                
+                <div class="stat-card">
+                    <span class="stat-icon">📈</span>
+                    <div class="stat-number" id="tasaAsistencia">0%</div>
+                    <div class="stat-label">Tasa de Asistencia</div>
+                </div>
+            </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-icon">📨</span>
-                <div class="stat-number" id="recordatoriosEnviados">0</div>
-                <div class="stat-label">Recordatorios Enviados</div>
-            </div>
+        <!-- Sección de Impacto Económico -->
+        <div class="impact-section">
+            <h2 class="impact-title">💰 Tu Impacto Económico Este Mes</h2>
             
-            <div class="stat-card">
-                <span class="stat-icon">⭐</span>
-                <div class="stat-number" id="resenasRecibidas">0</div>
-                <div class="stat-label">Reseñas Recibidas</div>
-            </div>
-            
-            <div class="stat-card">
-                <span class="stat-icon">📈</span>
-                <div class="stat-number" id="tasaAsistencia">0%</div>
-                <div class="stat-label">Tasa de Asistencia</div>
-            </div>
-
-            <div class="stat-card">
-                <span class="stat-icon">❌</span>
-                <div class="stat-number" id="citasPerdidas">0</div>
-                <div class="stat-label">Citas Perdidas</div>
-            </div>
-        </div>
-
-        <div class="impact-section" style="margin-top: 24px;">
-            <h2 class="impact-title">💡 Impacto del Sistema Este Mes</h2>
             <div class="impact-grid">
-                <div class="impact-item tooltip">
-                    <div class="impact-emoji">⏰</div>
+                <div class="impact-item" onclick="toggleDetails(this)">
+                    <div class="impact-icon">⏰</div>
                     <div class="impact-value" id="tiempoAhorrado">0h</div>
-                    <div class="impact-text">Tiempo ahorrado</div>
-                    <div class="breakdown" id="tiempoBreakdown"></div>
-                    <span class="tooltip-text">
-                        Tiempo que hubieras gastado enviando recordatorios manualmente por WhatsApp
-                    </span>
+                    <div class="impact-label">Tiempo Ahorrado</div>
+                    <div class="impact-breakdown" id="tiempoBreakdown">-</div>
+                    <div class="impact-details">
+                        <strong>💡 ¿Cómo se calcula?</strong><br>
+                        Cada recordatorio manual toma ~3 minutos. Multiplicamos los recordatorios enviados por 3 minutos y lo convertimos a horas.
+                    </div>
                 </div>
                 
-                <div class="impact-item tooltip">
-                    <div class="impact-emoji">💰</div>
+                <div class="impact-item" onclick="toggleDetails(this)">
+                    <div class="impact-icon">💵</div>
                     <div class="impact-value" id="ingresosRecuperados">€0</div>
-                    <div class="impact-text">Ingresos por citas</div>
-                    <div class="breakdown" id="ingresosBreakdown"></div>
-                    <span class="tooltip-text">
-                        Ingresos de las citas que antes se perdían y ahora recuperas gracias a los recordatorios automáticos
-                    </span>
+                    <div class="impact-label">Citas Recuperadas</div>
+                    <div class="impact-breakdown" id="ingresosBreakdown">-</div>
+                    <div class="impact-details">
+                        <strong>💡 ¿Cómo se calcula?</strong><br>
+                        Citas que habrías perdido sin recordatorios automáticos multiplicado por el precio promedio de sesión (€30).
+                    </div>
                 </div>
                 
-                <div class="impact-item tooltip">
-                    <div class="impact-emoji">💎</div>
+                <div class="impact-item" onclick="toggleDetails(this)">
+                    <div class="impact-icon">⚡</div>
                     <div class="impact-value" id="valorTiempo">€0</div>
-                    <div class="impact-text">Valor del tiempo</div>
-                    <div class="breakdown" id="valorTiempoBreakdown"></div>
-                    <span class="tooltip-text">
-                        Valor económico del tiempo ahorrado. Ese tiempo lo puedes usar para atender más pacientes o mejorar tu calidad de vida
-                    </span>
+                    <div class="impact-label">Valor del Tiempo</div>
+                    <div class="impact-breakdown" id="valorTiempoBreakdown">-</div>
+                    <div class="impact-details">
+                        <strong>💡 ¿Cómo se calcula?</strong><br>
+                        Las horas ahorradas multiplicadas por tu valor profesional por hora (€30/h). Tiempo que puedes dedicar a atender pacientes.
+                    </div>
                 </div>
                 
-                <div class="impact-item tooltip">
-                    <div class="impact-emoji">🌟</div>
+                <div class="impact-item" onclick="toggleDetails(this)">
+                    <div class="impact-icon">🌟</div>
                     <div class="impact-value" id="valorResenas">€0</div>
-                    <div class="impact-text">Valor de reseñas</div>
-                    <div class="breakdown" id="resenasBreakdown"></div>
-                    <span class="tooltip-text">
-                        Valor estimado de las reseñas en Google. Cada reseña positiva atrae aproximadamente €7-12 en nuevos ingresos por mayor visibilidad
-                    </span>
+                    <div class="impact-label">Valor de Reseñas</div>
+                    <div class="impact-breakdown" id="resenasBreakdown">-</div>
+                    <div class="impact-details">
+                        <strong>💡 ¿Cómo se calcula?</strong><br>
+                        Cada reseña positiva tiene un valor estimado de €7-12 en marketing y adquisición de nuevos pacientes. Usamos el promedio: €10.
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- Impacto Total -->
+            <div class="total-impact">
+                <div class="total-impact-label">🎯 Impacto Económico Total</div>
+                <div class="total-impact-value" id="impactoTotal">€0</div>
+            </div>
+            
 
-        <div class="total-impact-card">
-            <div class="total-impact-label">🚀 Impacto Económico Total</div>
-            <div class="total-impact-value" id="impactoTotal">€0</div>
-            <div class="badge-info" id="desgloseTotalBadge">Ver desglose arriba ↑</div>
+            
+            <div style="text-align: center; margin-top: 24px;">
+                <p style="color: #475569; font-size: 14px;">
+                    💡 Haz click en cualquier estadística para ver cómo se calcula
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Generado automáticamente por Asistente Clínica
         </div>
     </div>
 
     <script>
         // ============================================
-        // VARIABLES DE ENTRADA (Modifica estos valores)
+        // CONFIGURACIÓN: EDITA SOLO ESTOS VALORES
         // ============================================
         
         const recordatoriosEnviados = 36;  // Total de recordatorios enviados este mes
@@ -546,6 +653,14 @@
             animateCounter('valorResenas', valorTotalResenas, 1600, '€');
             animateCounter('impactoTotal', impactoTotal, 2000, '€');
         }, 500);
+        
+        // ============================================
+        // TOGGLE DETALLES (DESPLEGABLES)
+        // ============================================
+        
+        function toggleDetails(element) {
+            element.classList.toggle('active');
+        }
         
         // ============================================
         // CONSOLA: MOSTRAR CÁLCULOS DETALLADOS
